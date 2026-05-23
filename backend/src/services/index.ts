@@ -32,3 +32,14 @@ export type {
   ActivityWithRelations,
   UpcomingResult,
 } from './activities.service';
+
+export * as dashboardService from './dashboard.service';
+export type {
+  DashboardOverview,
+  DashboardKpis,
+  RevenueByMonthPoint,
+  LeadsBySourceItem,
+  PipelineColumn,
+  TopSalesRep,
+  UpcomingActivityItem,
+} from './dashboard.service';

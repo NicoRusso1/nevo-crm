@@ -91,3 +91,18 @@ export type {
   TimelineQuery,
   MyActivitiesQuery,
 } from './activities.validator';
+
+export {
+  overviewQuerySchema,
+  revenueByMonthQuerySchema,
+  topSalesRepsQuerySchema,
+  leadsBySourceQuerySchema,
+  pipelineQuerySchema,
+} from './dashboard.validator';
+export type {
+  OverviewQuery,
+  RevenueByMonthQuery,
+  TopSalesRepsQuery,
+  LeadsBySourceQuery,
+  PipelineQuery,
+} from './dashboard.validator';
