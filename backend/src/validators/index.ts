@@ -53,3 +53,22 @@ export type {
   ListClientDealsQuery,
   ListClientActivitiesQuery,
 } from './clients.validator';
+
+export {
+  createDealSchema,
+  updateDealSchema,
+  updateDealStageSchema,
+  updateDealProbabilitySchema,
+  listDealsQuerySchema,
+  kanbanQuerySchema,
+  dealStatsQuerySchema,
+} from './deals.validator';
+export type {
+  CreateDealInput,
+  UpdateDealInput,
+  UpdateDealStageInput,
+  UpdateDealProbabilityInput,
+  ListDealsQuery,
+  KanbanQuery,
+  DealStatsQuery,
+} from './deals.validator';

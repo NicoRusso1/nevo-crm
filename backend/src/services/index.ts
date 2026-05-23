@@ -17,3 +17,12 @@ export type {
   ClientDetail,
   ClientStats,
 } from './clients.service';
+
+export * as dealsService from './deals.service';
+export type {
+  DealWithRelations,
+  DealDetail,
+  DealStats,
+  KanbanBoard,
+  KanbanColumn,
+} from './deals.service';
