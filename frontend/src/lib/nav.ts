@@ -1,5 +1,6 @@
 import {
   LayoutDashboard,
+  Users,
   FolderKanban,
   CheckSquare,
   Settings,
@@ -17,7 +18,8 @@ export interface NavItem {
 }
 
 export const PRIMARY_NAV: readonly NavItem[] = [
-  { label: 'Dashboard', to: '/', icon: LayoutDashboard },
+  { label: 'Pipeline', to: '/', icon: LayoutDashboard },
+  { label: 'Contacts', to: '/contacts/c-001', icon: Users },
   { label: 'Projects', to: '/projects', icon: FolderKanban },
   { label: 'Tasks', to: '/tasks', icon: CheckSquare },
   { label: 'Settings', to: '/settings', icon: Settings },

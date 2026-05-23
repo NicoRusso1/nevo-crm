@@ -1,11 +1,11 @@
 import type { Config } from 'tailwindcss';
 
 /**
- * Design tokens for neVo.
+ * Design tokens for neVo Sales CRM.
  *
- * Inspired by Stripe and Linear: deep navy background, generous spacing,
- * very subtle borders (using rgba whites at low alpha rather than solid grays),
- * a single saturated accent for active/important states.
+ * Enterprise palette: steel surfaces + aggressive orange accent.
+ * Heavier, more corporate than the Linear-style indigo it replaced —
+ * the goal is "system used by closers all day", not "design tool".
  */
 export default {
   content: ['./index.html', './src/**/*.{ts,tsx}'],
@@ -13,31 +13,41 @@ export default {
     extend: {
       colors: {
         // Surfaces (darkest → lightest)
-        background: '#0B0F19',
-        surface: '#0F1420',
-        'surface-elevated': '#141A2A',
-        'surface-hover': '#1A2236',
+        background: '#0B0D10',
+        surface: '#14161A',
+        'surface-elevated': '#1B1E24',
+        'surface-hover': '#22262E',
 
         // Text
-        foreground: '#FAFAFA',
-        muted: '#9CA3AF',
+        foreground: '#EDEDED',
+        muted: '#A7AAB3',
         'muted-foreground': '#6B7280',
 
-        // Lines — use these via `border-line` etc.; intentionally translucent.
-        line: 'rgba(255, 255, 255, 0.06)',
-        'line-strong': 'rgba(255, 255, 255, 0.10)',
+        // Lines — solid (no translucent) for the heavier enterprise feel.
+        line: '#2B3038',
+        'line-strong': '#363C44',
 
-        // Accent (Linear-ish indigo/blue)
+        // Accent (aggressive orange for sales actions)
         accent: {
-          DEFAULT: '#5B6CFF',
-          hover: '#6E7EFF',
-          muted: 'rgba(91, 108, 255, 0.12)',
+          DEFAULT: '#FF6A00',
+          hover: '#FF8124',
+          active: '#E85D00',
+          muted: 'rgba(255, 106, 0, 0.12)',
         },
 
         // Status
-        success: '#22C55E',
-        warning: '#F59E0B',
-        danger: '#EF4444',
+        success: {
+          DEFAULT: '#2FBF71',
+          dark: '#1E8A50',
+        },
+        warning: {
+          DEFAULT: '#F2C14E',
+          soft: '#D6A72F',
+        },
+        danger: {
+          DEFAULT: '#E5484D',
+          dark: '#A83235',
+        },
       },
       fontFamily: {
         sans: [
@@ -51,21 +61,18 @@ export default {
         ],
       },
       fontSize: {
-        // Tighter tracking on display sizes — Linear-style.
         '4xl': ['2.25rem', { lineHeight: '1.1', letterSpacing: '-0.025em' }],
         '3xl': ['1.875rem', { lineHeight: '1.15', letterSpacing: '-0.02em' }],
         '2xl': ['1.5rem', { lineHeight: '1.2', letterSpacing: '-0.015em' }],
       },
       borderRadius: {
-        lg: '0.625rem',
-        xl: '0.875rem',
-        '2xl': '1.125rem',
+        lg: '0.5rem',
+        xl: '0.75rem',
+        '2xl': '1rem',
       },
       boxShadow: {
-        // Soft glow rather than hard drop shadows.
-        card: '0 1px 0 0 rgba(255, 255, 255, 0.04) inset, 0 1px 2px 0 rgba(0, 0, 0, 0.4)',
-        elevated:
-          '0 1px 0 0 rgba(255, 255, 255, 0.04) inset, 0 8px 24px -8px rgba(0, 0, 0, 0.5)',
+        card: '0 1px 2px 0 rgba(0, 0, 0, 0.5)',
+        elevated: '0 12px 32px -8px rgba(0, 0, 0, 0.6)',
       },
       keyframes: {
         'fade-in': {
