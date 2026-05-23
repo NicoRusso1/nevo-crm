@@ -8,6 +8,7 @@ import dealsRoutes from './deals.routes';
 import activitiesRoutes from './activities.routes';
 import dashboardRoutes from './dashboard.routes';
 import notificationsRoutes from './notifications.routes';
+import searchRoutes from './search.routes';
 
 /**
  * API root router.
@@ -23,5 +24,6 @@ router.use('/deals', dealsRoutes);
 router.use('/activities', activitiesRoutes);
 router.use('/dashboard', dashboardRoutes);
 router.use('/notifications', notificationsRoutes);
+router.use('/search', searchRoutes);
 
 export default router;

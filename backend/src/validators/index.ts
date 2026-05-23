@@ -117,3 +117,6 @@ export type {
   CreateNotificationInput,
   BroadcastNotificationInput,
 } from './notifications.validator';
+
+export { globalSearchQuerySchema, SEARCH_TYPES } from './search.validator';
+export type { GlobalSearchQuery, SearchType } from './search.validator';

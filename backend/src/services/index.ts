@@ -46,3 +46,6 @@ export type {
 
 export * as notificationsService from './notifications.service';
 export type { NotificationPayload } from './notifications.service';
+
+export * as searchService from './search.service';
+export type { GlobalSearchResult } from './search.service';

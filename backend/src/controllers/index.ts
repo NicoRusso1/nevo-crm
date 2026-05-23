@@ -7,3 +7,4 @@ export * as dealsController from './deals.controller';
 export * as activitiesController from './activities.controller';
 export * as dashboardController from './dashboard.controller';
 export * as notificationsController from './notifications.controller';
+export * as searchController from './search.controller';
