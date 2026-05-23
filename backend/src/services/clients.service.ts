@@ -10,6 +10,7 @@ import { Prisma, type DealStage } from '@prisma/client';
 
 import { prisma } from '../lib/prisma';
 import { ApiError } from '../utils/ApiError';
+import { paginate } from '../utils/pagination';
 import type { PaginatedResult } from '../types/common';
 import type {
   CreateClientInput,
@@ -43,7 +44,6 @@ export async function list(
   query: ListClientsQuery,
 ): Promise<PaginatedResult<ClientWithDealCount>> {
   const { page, pageSize, industry, search, sortBy, sortOrder } = query;
-  const skip = (page - 1) * pageSize;
 
   const where: Prisma.ClientWhereInput = {
     ...(industry ? { industry } : {}),
@@ -59,24 +59,19 @@ export async function list(
       : {}),
   };
 
-  const [items, total] = await prisma.$transaction([
-    prisma.client.findMany({
-      where,
-      skip,
-      take: pageSize,
-      orderBy: { [sortBy]: sortOrder },
-      include: clientWithDealCount,
-    }),
-    prisma.client.count({ where }),
-  ]);
-
-  return {
-    items,
+  return paginate({
     page,
     pageSize,
-    total,
-    totalPages: Math.max(1, Math.ceil(total / pageSize)),
-  };
+    findMany: (skip, take) =>
+      prisma.client.findMany({
+        where,
+        skip,
+        take,
+        orderBy: { [sortBy]: sortOrder },
+        include: clientWithDealCount,
+      }),
+    count: () => prisma.client.count({ where }),
+  });
 }
 
 // ── Detail (with stats) ─────────────────────────────────────────────────────
@@ -197,33 +192,24 @@ export async function listDeals(clientId: string, query: ListClientDealsQuery) {
   await assertClientExists(clientId);
 
   const { page, pageSize, stage, sortBy, sortOrder } = query;
-  const skip = (page - 1) * pageSize;
-
   const where: Prisma.DealWhereInput = {
     clientId,
     ...(stage ? { stage } : {}),
   };
 
-  const [items, total] = await prisma.$transaction([
-    prisma.deal.findMany({
-      where,
-      skip,
-      take: pageSize,
-      orderBy: { [sortBy]: sortOrder },
-      include: {
-        owner: { select: ownerSelect },
-      },
-    }),
-    prisma.deal.count({ where }),
-  ]);
-
-  return {
-    items,
+  return paginate({
     page,
     pageSize,
-    total,
-    totalPages: Math.max(1, Math.ceil(total / pageSize)),
-  };
+    findMany: (skip, take) =>
+      prisma.deal.findMany({
+        where,
+        skip,
+        take,
+        orderBy: { [sortBy]: sortOrder },
+        include: { owner: { select: ownerSelect } },
+      }),
+    count: () => prisma.deal.count({ where }),
+  });
 }
 
 export async function listActivities(
@@ -233,7 +219,6 @@ export async function listActivities(
   await assertClientExists(clientId);
 
   const { page, pageSize, type, completed, sortBy, sortOrder } = query;
-  const skip = (page - 1) * pageSize;
 
   const where: Prisma.ActivityWhereInput = {
     // Activities are tied to deals, not directly to clients — so we filter by
@@ -243,27 +228,22 @@ export async function listActivities(
     ...(completed !== undefined ? { completed } : {}),
   };
 
-  const [items, total] = await prisma.$transaction([
-    prisma.activity.findMany({
-      where,
-      skip,
-      take: pageSize,
-      orderBy: { [sortBy]: sortOrder },
-      include: {
-        user: { select: ownerSelect },
-        deal: { select: { id: true, title: true, stage: true } },
-      },
-    }),
-    prisma.activity.count({ where }),
-  ]);
-
-  return {
-    items,
+  return paginate({
     page,
     pageSize,
-    total,
-    totalPages: Math.max(1, Math.ceil(total / pageSize)),
-  };
+    findMany: (skip, take) =>
+      prisma.activity.findMany({
+        where,
+        skip,
+        take,
+        orderBy: { [sortBy]: sortOrder },
+        include: {
+          user: { select: ownerSelect },
+          deal: { select: { id: true, title: true, stage: true } },
+        },
+      }),
+    count: () => prisma.activity.count({ where }),
+  });
 }
 
 // ── Internals ───────────────────────────────────────────────────────────────

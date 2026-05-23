@@ -44,12 +44,7 @@ export const list = asyncHandler(async (req: Request, res: Response) => {
   const result = await usersService.list(
     req.query as unknown as Parameters<typeof usersService.list>[0],
   );
-  return ApiResponse.paginated(res, result.items, {
-    page: result.page,
-    pageSize: result.pageSize,
-    total: result.total,
-    totalPages: result.totalPages,
-  });
+  return ApiResponse.paginated(res, result);
 });
 
 export const getById = asyncHandler(async (req: Request, res: Response) => {

@@ -16,6 +16,7 @@ import { Prisma, type DealStage, type Role } from '@prisma/client';
 
 import { prisma } from '../lib/prisma';
 import { ApiError } from '../utils/ApiError';
+import { paginate } from '../utils/pagination';
 import { notifyUser } from './notifications.service';
 import type { PaginatedResult } from '../types/common';
 import type {
@@ -286,27 +287,21 @@ export async function updateProbability(
 
 export async function list(query: ListDealsQuery): Promise<PaginatedResult<DealWithRelations>> {
   const { page, pageSize, sortBy, sortOrder } = query;
-  const skip = (page - 1) * pageSize;
   const where = buildListWhere(query);
 
-  const [items, total] = await prisma.$transaction([
-    prisma.deal.findMany({
-      where,
-      skip,
-      take: pageSize,
-      orderBy: { [sortBy]: sortOrder },
-      include: dealInclude,
-    }),
-    prisma.deal.count({ where }),
-  ]);
-
-  return {
-    items,
+  return paginate({
     page,
     pageSize,
-    total,
-    totalPages: Math.max(1, Math.ceil(total / pageSize)),
-  };
+    findMany: (skip, take) =>
+      prisma.deal.findMany({
+        where,
+        skip,
+        take,
+        orderBy: { [sortBy]: sortOrder },
+        include: dealInclude,
+      }),
+    count: () => prisma.deal.count({ where }),
+  });
 }
 
 // ── Kanban view ─────────────────────────────────────────────────────────────

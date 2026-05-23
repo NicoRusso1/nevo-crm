@@ -24,6 +24,7 @@ import type { Notification, Role } from '@prisma/client';
 import { prisma } from '../lib/prisma';
 import { ApiError } from '../utils/ApiError';
 import { logger } from '../lib/logger';
+import { buildPagination } from '../utils/pagination';
 import type { PaginatedResult } from '../types/common';
 import type {
   BroadcastNotificationInput,
@@ -45,8 +46,9 @@ export async function listMine(
     ...(read !== undefined ? { read } : {}),
   };
 
-  // Fetch page, total, AND unread count in the same round-trip. The UI almost
-  // always renders the unread badge next to the list.
+  // 3 queries in one round-trip: page items, matching total, sidebar badge.
+  // Doesn't use the generic `paginate()` helper because that pattern is fixed
+  // at two queries — here we want to piggy-back the unread count.
   const [items, total, unreadCount] = await prisma.$transaction([
     prisma.notification.findMany({
       where,
@@ -59,11 +61,7 @@ export async function listMine(
   ]);
 
   return {
-    items,
-    page,
-    pageSize,
-    total,
-    totalPages: Math.max(1, Math.ceil(total / pageSize)),
+    ...buildPagination(items, page, pageSize, total),
     unreadCount,
   };
 }

@@ -19,12 +19,7 @@ export const list = asyncHandler(async (req: Request, res: Response) => {
   const result = await activitiesService.list(
     req.query as unknown as Parameters<typeof activitiesService.list>[0],
   );
-  return ApiResponse.paginated(res, result.items, {
-    page: result.page,
-    pageSize: result.pageSize,
-    total: result.total,
-    totalPages: result.totalPages,
-  });
+  return ApiResponse.paginated(res, result);
 });
 
 export const upcoming = asyncHandler(async (req: Request, res: Response) => {
@@ -39,12 +34,7 @@ export const timeline = asyncHandler(async (req: Request, res: Response) => {
   const result = await activitiesService.timeline(
     req.query as unknown as Parameters<typeof activitiesService.timeline>[0],
   );
-  return ApiResponse.paginated(res, result.items, {
-    page: result.page,
-    pageSize: result.pageSize,
-    total: result.total,
-    totalPages: result.totalPages,
-  });
+  return ApiResponse.paginated(res, result);
 });
 
 export const myFeed = asyncHandler(async (req: Request, res: Response) => {
@@ -52,12 +42,7 @@ export const myFeed = asyncHandler(async (req: Request, res: Response) => {
     req.query as unknown as Parameters<typeof activitiesService.myFeed>[0],
     requester(req),
   );
-  return ApiResponse.paginated(res, result.items, {
-    page: result.page,
-    pageSize: result.pageSize,
-    total: result.total,
-    totalPages: result.totalPages,
-  });
+  return ApiResponse.paginated(res, result);
 });
 
 // ── Resource handlers ──────────────────────────────────────────────────────

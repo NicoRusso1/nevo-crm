@@ -16,6 +16,7 @@ import { promises as fs } from 'node:fs';
 import { prisma } from '../lib/prisma';
 import { hashPassword, verifyPassword } from '../lib/bcrypt';
 import { ApiError } from '../utils/ApiError';
+import { paginate } from '../utils/pagination';
 import type { PaginatedResult } from '../types/common';
 import type {
   ChangePasswordInput,
@@ -108,7 +109,6 @@ export async function updateAvatar(
 
 export async function list(query: ListUsersQuery): Promise<PaginatedResult<PublicUser>> {
   const { page, pageSize, role, search } = query;
-  const skip = (page - 1) * pageSize;
 
   const where: Prisma.UserWhereInput = {
     ...(role ? { role } : {}),
@@ -122,24 +122,19 @@ export async function list(query: ListUsersQuery): Promise<PaginatedResult<Publi
       : {}),
   };
 
-  const [items, total] = await prisma.$transaction([
-    prisma.user.findMany({
-      where,
-      skip,
-      take: pageSize,
-      orderBy: { createdAt: 'desc' },
-      select: publicUserSelect,
-    }),
-    prisma.user.count({ where }),
-  ]);
-
-  return {
-    items,
+  return paginate({
     page,
     pageSize,
-    total,
-    totalPages: Math.max(1, Math.ceil(total / pageSize)),
-  };
+    findMany: (skip, take) =>
+      prisma.user.findMany({
+        where,
+        skip,
+        take,
+        orderBy: { createdAt: 'desc' },
+        select: publicUserSelect,
+      }),
+    count: () => prisma.user.count({ where }),
+  });
 }
 
 export async function findById(id: string): Promise<PublicUser> {

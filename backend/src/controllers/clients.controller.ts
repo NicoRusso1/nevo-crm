@@ -11,12 +11,7 @@ export const list = asyncHandler(async (req: Request, res: Response) => {
   const result = await clientsService.list(
     req.query as unknown as Parameters<typeof clientsService.list>[0],
   );
-  return ApiResponse.paginated(res, result.items, {
-    page: result.page,
-    pageSize: result.pageSize,
-    total: result.total,
-    totalPages: result.totalPages,
-  });
+  return ApiResponse.paginated(res, result);
 });
 
 export const getById = asyncHandler(async (req: Request, res: Response) => {
@@ -44,12 +39,7 @@ export const listDeals = asyncHandler(async (req: Request, res: Response) => {
     req.params.id!,
     req.query as unknown as Parameters<typeof clientsService.listDeals>[1],
   );
-  return ApiResponse.paginated(res, result.items, {
-    page: result.page,
-    pageSize: result.pageSize,
-    total: result.total,
-    totalPages: result.totalPages,
-  });
+  return ApiResponse.paginated(res, result);
 });
 
 export const listActivities = asyncHandler(async (req: Request, res: Response) => {
@@ -57,10 +47,5 @@ export const listActivities = asyncHandler(async (req: Request, res: Response) =
     req.params.id!,
     req.query as unknown as Parameters<typeof clientsService.listActivities>[1],
   );
-  return ApiResponse.paginated(res, result.items, {
-    page: result.page,
-    pageSize: result.pageSize,
-    total: result.total,
-    totalPages: result.totalPages,
-  });
+  return ApiResponse.paginated(res, result);
 });

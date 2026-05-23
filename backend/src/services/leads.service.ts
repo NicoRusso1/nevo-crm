@@ -16,6 +16,7 @@ import { Prisma, type Client, type Deal, type Role } from '@prisma/client';
 
 import { prisma } from '../lib/prisma';
 import { ApiError } from '../utils/ApiError';
+import { paginate } from '../utils/pagination';
 import { notifyUser } from './notifications.service';
 import type { PaginatedResult } from '../types/common';
 import type {
@@ -172,7 +173,6 @@ export async function list(
   query: ListLeadsQuery,
 ): Promise<PaginatedResult<LeadWithAssignee>> {
   const { page, pageSize, status, source, assignedToId, search, sortBy, sortOrder } = query;
-  const skip = (page - 1) * pageSize;
 
   const where: Prisma.LeadWhereInput = {
     ...(status ? { status } : {}),
@@ -190,24 +190,19 @@ export async function list(
       : {}),
   };
 
-  const [items, total] = await prisma.$transaction([
-    prisma.lead.findMany({
-      where,
-      skip,
-      take: pageSize,
-      orderBy: { [sortBy]: sortOrder },
-      include: leadInclude,
-    }),
-    prisma.lead.count({ where }),
-  ]);
-
-  return {
-    items,
+  return paginate({
     page,
     pageSize,
-    total,
-    totalPages: Math.max(1, Math.ceil(total / pageSize)),
-  };
+    findMany: (skip, take) =>
+      prisma.lead.findMany({
+        where,
+        skip,
+        take,
+        orderBy: { [sortBy]: sortOrder },
+        include: leadInclude,
+      }),
+    count: () => prisma.lead.count({ where }),
+  });
 }
 
 // ── Assignment (privileged only — also gated at the route) ──────────────────

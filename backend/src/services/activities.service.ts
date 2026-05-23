@@ -17,6 +17,7 @@ import { Prisma, type Role } from '@prisma/client';
 
 import { prisma } from '../lib/prisma';
 import { ApiError } from '../utils/ApiError';
+import { paginate } from '../utils/pagination';
 import { notifyUser } from './notifications.service';
 import type { PaginatedResult } from '../types/common';
 import type {
@@ -215,27 +216,21 @@ export async function list(
   query: ListActivitiesQuery,
 ): Promise<PaginatedResult<ActivityWithRelations>> {
   const { page, pageSize, sortBy, sortOrder } = query;
-  const skip = (page - 1) * pageSize;
   const where = buildListWhere(query);
 
-  const [items, total] = await prisma.$transaction([
-    prisma.activity.findMany({
-      where,
-      skip,
-      take: pageSize,
-      orderBy: { [sortBy]: sortOrder },
-      include: activityInclude,
-    }),
-    prisma.activity.count({ where }),
-  ]);
-
-  return {
-    items,
+  return paginate({
     page,
     pageSize,
-    total,
-    totalPages: Math.max(1, Math.ceil(total / pageSize)),
-  };
+    findMany: (skip, take) =>
+      prisma.activity.findMany({
+        where,
+        skip,
+        take,
+        orderBy: { [sortBy]: sortOrder },
+        include: activityInclude,
+      }),
+    count: () => prisma.activity.count({ where }),
+  });
 }
 
 // ── Upcoming (due-soon + not-completed) ─────────────────────────────────────
@@ -283,7 +278,6 @@ export async function timeline(
   query: TimelineQuery,
 ): Promise<PaginatedResult<ActivityWithRelations>> {
   const { page, pageSize } = query;
-  const skip = (page - 1) * pageSize;
 
   const where: Prisma.ActivityWhereInput = {
     ...(query.userId ? { userId: query.userId } : {}),
@@ -301,24 +295,19 @@ export async function timeline(
       : {}),
   };
 
-  const [items, total] = await prisma.$transaction([
-    prisma.activity.findMany({
-      where,
-      skip,
-      take: pageSize,
-      orderBy: { createdAt: 'desc' },
-      include: activityInclude,
-    }),
-    prisma.activity.count({ where }),
-  ]);
-
-  return {
-    items,
+  return paginate({
     page,
     pageSize,
-    total,
-    totalPages: Math.max(1, Math.ceil(total / pageSize)),
-  };
+    findMany: (skip, take) =>
+      prisma.activity.findMany({
+        where,
+        skip,
+        take,
+        orderBy: { createdAt: 'desc' },
+        include: activityInclude,
+      }),
+    count: () => prisma.activity.count({ where }),
+  });
 }
 
 // ── My feed (current user) ──────────────────────────────────────────────────

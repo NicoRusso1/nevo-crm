@@ -1,5 +1,6 @@
 import type { Response } from 'express';
 import { HTTP_STATUS } from '../config/constants';
+import type { CursorPaginatedResult, PaginatedResult } from '../types/common';
 
 /**
  * Standard JSON envelope returned by every endpoint.
@@ -22,13 +23,23 @@ export interface ErrorResponse {
   };
 }
 
+export interface PaginationMeta {
+  page: number;
+  pageSize: number;
+  total: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+}
+
+export interface CursorMeta {
+  nextCursor: string | null;
+  hasMore: boolean;
+}
+
 export interface ResponseMeta {
-  pagination?: {
-    page: number;
-    pageSize: number;
-    total: number;
-    totalPages: number;
-  };
+  pagination?: PaginationMeta;
+  cursor?: CursorMeta;
   [key: string]: unknown;
 }
 
@@ -44,19 +55,49 @@ export const ApiResponse = {
   },
 
   accepted<T>(res: Response, data: T): Response<SuccessResponse<T>> {
-    return res.status(HTTP_STATUS.ACCEPTED).json({ success: true, data } satisfies SuccessResponse<T>);
+    return res
+      .status(HTTP_STATUS.ACCEPTED)
+      .json({ success: true, data } satisfies SuccessResponse<T>);
   },
 
   noContent(res: Response): Response {
     return res.status(HTTP_STATUS.NO_CONTENT).send();
   },
 
+  /**
+   * Offset-paginated response. Pass the `PaginatedResult` returned by the
+   * `paginate()` helper — items go to `data`, the rest to `meta.pagination`.
+   *
+   * `extraMeta` lets call sites tuck in sibling metadata (e.g. `unreadCount`
+   * for notifications) without forking the envelope shape.
+   */
   paginated<T>(
     res: Response,
-    items: T[],
-    pagination: NonNullable<ResponseMeta['pagination']>,
+    result: PaginatedResult<T>,
+    extraMeta: Omit<ResponseMeta, 'pagination'> = {},
   ): Response<SuccessResponse<T[]>> {
-    return ApiResponse.ok(res, items, { pagination });
+    const pagination: PaginationMeta = {
+      page: result.page,
+      pageSize: result.pageSize,
+      total: result.total,
+      totalPages: result.totalPages,
+      hasNextPage: result.hasNextPage,
+      hasPreviousPage: result.hasPreviousPage,
+    };
+    return ApiResponse.ok(res, result.items, { pagination, ...extraMeta });
+  },
+
+  /** Cursor-paginated response. */
+  cursorPaginated<T>(
+    res: Response,
+    result: CursorPaginatedResult<T>,
+    extraMeta: Omit<ResponseMeta, 'cursor'> = {},
+  ): Response<SuccessResponse<T[]>> {
+    const cursor: CursorMeta = {
+      nextCursor: result.nextCursor,
+      hasMore: result.hasMore,
+    };
+    return ApiResponse.ok(res, result.items, { cursor, ...extraMeta });
   },
 
   error(
