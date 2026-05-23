@@ -12,7 +12,7 @@
  * decides WHAT additional rules apply once the request reaches the domain
  * layer (e.g. "a SALES_REP can only edit leads assigned to themselves").
  */
-import { Prisma, type Client, type Deal, type Lead, type Role } from '@prisma/client';
+import { Prisma, type Client, type Deal, type Role } from '@prisma/client';
 
 import { prisma } from '../lib/prisma';
 import { ApiError } from '../utils/ApiError';
@@ -215,19 +215,38 @@ export async function list(
 export async function assign(
   id: string,
   input: AssignLeadInput,
+  requester?: Requester,
 ): Promise<LeadWithAssignee> {
-  const existing = await prisma.lead.findUnique({ where: { id }, select: { id: true } });
+  const existing = await prisma.lead.findUnique({
+    where: { id },
+    select: { id: true, assignedToId: true },
+  });
   if (!existing) throw ApiError.notFound('Lead not found');
 
   if (input.userId !== null) {
     await assertUserExists(input.userId);
   }
 
-  return prisma.lead.update({
+  const updated = await prisma.lead.update({
     where: { id },
     data: { assignedToId: input.userId },
     include: leadInclude,
   });
+
+  // Notify the new assignee on an actual change to someone other than the
+  // requester. `requester` is optional so existing call sites don't break.
+  if (
+    input.userId &&
+    input.userId !== existing.assignedToId &&
+    input.userId !== requester?.id
+  ) {
+    await notifyUser(input.userId, {
+      title: 'Lead assigned to you',
+      message: `You've been assigned the lead "${updated.name}".`,
+    });
+  }
+
+  return updated;
 }
 
 // ── Convert lead → Client (+ optional Deal) ─────────────────────────────────
@@ -249,7 +268,7 @@ export async function convertToClient(
   input: ConvertLeadInput,
   requester: Requester,
 ): Promise<ConvertLeadResult> {
-  return prisma.$transaction(async (tx) => {
+  const result = await prisma.$transaction(async (tx) => {
     const lead = await tx.lead.findUnique({ where: { id } });
     if (!lead) throw ApiError.notFound('Lead not found');
 
@@ -314,6 +333,18 @@ export async function convertToClient(
 
     return { lead: updatedLead, client, deal };
   });
+
+  // Side-effect AFTER the transaction commits — so a notification failure
+  // never rolls back the conversion. Conversion is celebratory: notify the
+  // lead's assignee even if it's the requester.
+  if (result.lead.assignedToId) {
+    await notifyUser(result.lead.assignedToId, {
+      title: 'Lead converted to client 🎉',
+      message: `"${result.lead.name}" was converted into the client "${result.client.companyName}".`,
+    });
+  }
+
+  return result;
 }
 
 // ── Internals ───────────────────────────────────────────────────────────────

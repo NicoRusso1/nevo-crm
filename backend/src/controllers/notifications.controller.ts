@@ -20,11 +20,15 @@ export const listMine = asyncHandler(async (req: Request, res: Response) => {
     userId(req),
     req.query as unknown as Parameters<typeof notificationsService.listMine>[1],
   );
-  return ApiResponse.paginated(res, result.items, {
-    page: result.page,
-    pageSize: result.pageSize,
-    total: result.total,
-    totalPages: result.totalPages,
+  // unreadCount is a sibling of pagination inside meta, not inside the
+  // pagination object itself.
+  return ApiResponse.ok(res, result.items, {
+    pagination: {
+      page: result.page,
+      pageSize: result.pageSize,
+      total: result.total,
+      totalPages: result.totalPages,
+    },
     unreadCount: result.unreadCount,
   });
 });

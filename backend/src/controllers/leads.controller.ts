@@ -47,7 +47,7 @@ export const remove = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const assign = asyncHandler(async (req: Request, res: Response) => {
-  const lead = await leadsService.assign(req.params.id!, req.body);
+  const lead = await leadsService.assign(req.params.id!, req.body, requester(req));
   return ApiResponse.ok(res, { lead });
 });
 

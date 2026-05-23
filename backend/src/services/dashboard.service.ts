@@ -11,7 +11,7 @@
  *   - SALES_REP is automatically scoped to themselves. ADMIN/MANAGER see
  *     company-wide data and may pass `ownerId` to drill into a rep.
  */
-import { Prisma, type DealStage, type LeadStatus, type Role } from '@prisma/client';
+import { Prisma, type DealStage, type Role } from '@prisma/client';
 
 import { prisma } from '../lib/prisma';
 import type {
@@ -482,6 +482,3 @@ function round1(n: number): number {
   return Math.round(n * 10) / 10;
 }
 
-// Silence unused-import warnings if a future refactor drops a usage.
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-type _LeadStatus = LeadStatus;

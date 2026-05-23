@@ -16,6 +16,7 @@ import { Prisma, type DealStage, type Role } from '@prisma/client';
 
 import { prisma } from '../lib/prisma';
 import { ApiError } from '../utils/ApiError';
+import { notifyUser } from './notifications.service';
 import type { PaginatedResult } from '../types/common';
 import type {
   CreateDealInput,
@@ -117,7 +118,7 @@ export async function create(
   const stage = input.stage ?? 'LEAD';
   const probability = input.probability ?? defaultProbabilityFor(stage);
 
-  return prisma.deal.create({
+  const deal = await prisma.deal.create({
     data: {
       title: input.title,
       value: input.value,
@@ -129,6 +130,16 @@ export async function create(
     },
     include: dealInclude,
   });
+
+  // Notify the new owner only when it's someone other than the creator.
+  if (deal.ownerId !== requester.id) {
+    await notifyUser(deal.ownerId, {
+      title: 'New deal assigned',
+      message: `You're now the owner of "${deal.title}".`,
+    });
+  }
+
+  return deal;
 }
 
 export async function update(
@@ -161,11 +172,31 @@ export async function update(
     if (input.stage === 'LOST') data.probability = 0;
   }
 
-  return prisma.deal.update({
+  const updated = await prisma.deal.update({
     where: { id },
     data,
     include: dealInclude,
   });
+
+  // Reassignment → notify new owner (if not self).
+  if (
+    input.ownerId &&
+    input.ownerId !== existing.ownerId &&
+    input.ownerId !== requester.id
+  ) {
+    await notifyUser(input.ownerId, {
+      title: 'Deal reassigned to you',
+      message: `The deal "${updated.title}" has been reassigned to you.`,
+    });
+  }
+
+  // Terminal stage transitions via the generic PATCH endpoint also fire
+  // notifications (mirrors what updateStage does).
+  if (input.stage && input.stage !== existing.stage) {
+    await notifyOnStageTransition(updated, existing.stage, input.stage, requester);
+  }
+
+  return updated;
 }
 
 export async function remove(id: string, requester: Requester): Promise<void> {
@@ -220,11 +251,15 @@ export async function updateStage(
   if (input.stage === 'WON') data.probability = 100;
   if (input.stage === 'LOST') data.probability = 0;
 
-  return prisma.deal.update({
+  const updated = await prisma.deal.update({
     where: { id },
     data,
     include: dealInclude,
   });
+
+  await notifyOnStageTransition(updated, existing.stage, input.stage, requester);
+
+  return updated;
 }
 
 export async function updateProbability(
@@ -486,6 +521,45 @@ function buildStatsSqlWhere(query: DealStatsQuery): Prisma.Sql {
   if (query.from) conditions.push(Prisma.sql`createdAt >= ${query.from}`);
   if (query.to) conditions.push(Prisma.sql`createdAt <= ${query.to}`);
   return Prisma.join(conditions, ' AND ');
+}
+
+// ── Notifications ──────────────────────────────────────────────────────────
+
+/**
+ * Fire celebratory / warning notifications on terminal stage transitions.
+ *   - WON  → always notify the owner (the win deserves visibility even when
+ *            they closed it themselves).
+ *   - LOST → notify only when someone other than the owner moved it (don't
+ *            rub salt in your own wound).
+ *
+ * Non-terminal moves don't trigger anything — too noisy.
+ */
+async function notifyOnStageTransition(
+  deal: DealWithRelations,
+  fromStage: DealStage,
+  toStage: DealStage,
+  requester: Requester,
+): Promise<void> {
+  if (fromStage === toStage) return;
+
+  if (toStage === 'WON') {
+    const formatted = Number(deal.value.toString()).toLocaleString('en-US', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+    await notifyUser(deal.ownerId, {
+      title: 'Deal closed-won 🎉',
+      message: `Congrats! "${deal.title}" closed for $${formatted}.`,
+    });
+    return;
+  }
+
+  if (toStage === 'LOST' && requester.id !== deal.ownerId) {
+    await notifyUser(deal.ownerId, {
+      title: 'Deal marked as lost',
+      message: `"${deal.title}" was moved to LOST.`,
+    });
+  }
 }
 
 // ── Guards ──────────────────────────────────────────────────────────────────

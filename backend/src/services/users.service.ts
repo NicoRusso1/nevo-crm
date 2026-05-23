@@ -9,7 +9,7 @@
  * job via `authorize(...)`. Service-level guards exist only when a check
  * depends on identity (e.g. "an admin can't delete themselves").
  */
-import { Prisma, type Role, type User } from '@prisma/client';
+import { Prisma, type User } from '@prisma/client';
 import path from 'node:path';
 import { promises as fs } from 'node:fs';
 

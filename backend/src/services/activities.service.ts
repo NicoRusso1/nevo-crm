@@ -17,6 +17,7 @@ import { Prisma, type Role } from '@prisma/client';
 
 import { prisma } from '../lib/prisma';
 import { ApiError } from '../utils/ApiError';
+import { notifyUser } from './notifications.service';
 import type { PaginatedResult } from '../types/common';
 import type {
   CreateActivityInput,
@@ -87,7 +88,7 @@ export async function create(
   if (input.leadId) await assertLeadExists(input.leadId);
   if (input.dealId) await assertDealExists(input.dealId);
 
-  return prisma.activity.create({
+  const activity = await prisma.activity.create({
     data: {
       type: input.type,
       description: input.description,
@@ -99,6 +100,17 @@ export async function create(
     },
     include: activityInclude,
   });
+
+  // Notify the assignee only when it's somebody other than the requester
+  // (managers logging activities for their reps).
+  if (activity.userId !== requester.id) {
+    await notifyUser(activity.userId, {
+      title: 'New activity assigned',
+      message: `You've been assigned a ${activity.type.toLowerCase()}: "${truncate(activity.description, 80)}".`,
+    });
+  }
+
+  return activity;
 }
 
 export async function update(
@@ -123,11 +135,26 @@ export async function update(
   if (input.leadId) await assertLeadExists(input.leadId);
   if (input.dealId) await assertDealExists(input.dealId);
 
-  return prisma.activity.update({
+  const updated = await prisma.activity.update({
     where: { id },
     data: input,
     include: activityInclude,
   });
+
+  // Reassignment notification — only when the assignee actually changed and
+  // is not the requester.
+  if (
+    input.userId &&
+    input.userId !== existing.userId &&
+    input.userId !== requester.id
+  ) {
+    await notifyUser(input.userId, {
+      title: 'Activity reassigned to you',
+      message: `The ${updated.type.toLowerCase()} "${truncate(updated.description, 80)}" has been reassigned to you.`,
+    });
+  }
+
+  return updated;
 }
 
 /**
@@ -326,6 +353,11 @@ function buildListWhere(query: ListActivitiesQuery): Prisma.ActivityWhereInput {
         }
       : {}),
   };
+}
+
+/** Truncate a string for use in notification text. */
+function truncate(text: string, max: number): string {
+  return text.length <= max ? text : `${text.slice(0, max - 1)}…`;
 }
 
 // ── Guards ──────────────────────────────────────────────────────────────────
