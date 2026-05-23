@@ -53,7 +53,7 @@ export const list = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const getById = asyncHandler(async (req: Request, res: Response) => {
-  const user = await usersService.findById(req.params.id);
+  const user = await usersService.findById(req.params.id!);
   return ApiResponse.ok(res, { user });
 });
 
@@ -63,12 +63,12 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const update = asyncHandler(async (req: Request, res: Response) => {
-  const user = await usersService.update(req.params.id, req.body);
+  const user = await usersService.update(req.params.id!, req.body);
   return ApiResponse.ok(res, { user });
 });
 
 export const remove = asyncHandler(async (req: Request, res: Response) => {
   if (!req.user) throw ApiError.unauthorized();
-  await usersService.remove(req.params.id, req.user.id);
+  await usersService.remove(req.params.id!, req.user.id);
   return ApiResponse.noContent(res);
 });

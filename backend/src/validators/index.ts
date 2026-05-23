@@ -23,3 +23,18 @@ export type {
   UpdateUserInput,
   ListUsersQuery,
 } from './users.validator';
+
+export {
+  createLeadSchema,
+  updateLeadSchema,
+  listLeadsQuerySchema,
+  assignLeadSchema,
+  convertLeadSchema,
+} from './leads.validator';
+export type {
+  CreateLeadInput,
+  UpdateLeadInput,
+  ListLeadsQuery,
+  AssignLeadInput,
+  ConvertLeadInput,
+} from './leads.validator';
