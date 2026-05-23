@@ -1,19 +1,18 @@
 import { useMemo } from 'react';
 import { compactNumber } from '@/lib/format';
-import { DEALS } from './mock-data';
+import { useSalesStore } from './store';
 
 /**
- * Quiet header strip with three sales-relevant numbers. Intentionally low-key
- * — these inform but never compete with the pipeline for attention.
- *
- * Numbers are computed from the same DEALS source so the bar stays in sync
- * with whatever the kanban shows.
+ * Quiet header strip with three sales-relevant numbers. Computed from the
+ * live `deals` state so it stays in sync as deals move between stages.
  */
 export function PipelineStatsBar() {
+  const { deals } = useSalesStore();
+
   const stats = useMemo(() => {
-    const inProgress = DEALS.filter((d) => d.stage !== 'won' && d.stage !== 'lost');
-    const won = DEALS.filter((d) => d.stage === 'won').length;
-    const lost = DEALS.filter((d) => d.stage === 'lost').length;
+    const inProgress = deals.filter((d) => d.stage !== 'won' && d.stage !== 'lost');
+    const won = deals.filter((d) => d.stage === 'won').length;
+    const lost = deals.filter((d) => d.stage === 'lost').length;
     const closed = won + lost;
 
     return {
@@ -21,7 +20,7 @@ export function PipelineStatsBar() {
       dealsInProgress: inProgress.length,
       winRate: closed === 0 ? 0 : Math.round((won / closed) * 100),
     };
-  }, []);
+  }, [deals]);
 
   return (
     <div className="flex items-center gap-8 px-1">

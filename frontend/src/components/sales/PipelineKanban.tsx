@@ -1,23 +1,20 @@
 import { useMemo } from 'react';
 import { PipelineColumn } from './PipelineColumn';
-import { DEALS, STAGES, type Deal, type DealStage } from './mock-data';
+import { STAGES, type Deal, type DealStage } from './mock-data';
+import { useSalesStore } from './store';
 
 /**
  * Pipeline board — horizontally scrollable kanban with one column per stage.
  *
- * Memoizes the per-stage grouping so re-renders (from hover state changes in
- * children, etc.) don't re-iterate the deal list.
+ * Reads `deals` from the sales store so any mutation (stage change, mark
+ * won/lost) is reflected immediately in the right column.
  */
 export function PipelineKanban() {
-  const dealsByStage = useMemo(() => groupByStage(DEALS), []);
+  const { deals } = useSalesStore();
+  const dealsByStage = useMemo(() => groupByStage(deals), [deals]);
 
   return (
-    <div
-      className="
-        flex flex-1 gap-3 overflow-x-auto overflow-y-hidden
-        pb-2
-      "
-    >
+    <div className="flex flex-1 gap-3 overflow-x-auto overflow-y-hidden pb-2">
       {STAGES.map((stage) => (
         <PipelineColumn
           key={stage.key}

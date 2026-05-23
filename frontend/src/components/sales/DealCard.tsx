@@ -1,8 +1,9 @@
-import { MoreHorizontal, Mail, Phone } from 'lucide-react';
+import { MoreHorizontal, Mail, Phone, type LucideIcon } from 'lucide-react';
 import { Avatar } from '@/components/ui/Avatar';
 import { cn } from '@/lib/cn';
 import { formatMoney } from '@/lib/format';
 import type { Deal, Priority } from './mock-data';
+import { useSalesStore } from './store';
 
 interface DealCardProps {
   deal: Deal;
@@ -29,17 +30,33 @@ const PRIORITY_TEXT: Record<Priority, string> = {
 /**
  * Single deal card in the pipeline kanban.
  *
- * Dense by design — a sales rep scans dozens of these per minute. Hover
- * surfaces quick actions (call / email) without permanently using space.
+ * Clicking anywhere on the card opens the drawer for that deal. Inner
+ * buttons (more menu, quick actions) stop propagation so they don't trigger
+ * the parent click.
  */
 export function DealCard({ deal }: DealCardProps) {
+  const { selectDeal, selectedDealId } = useSalesStore();
+  const isSelected = selectedDealId === deal.id;
+
   return (
     <div
+      role="button"
+      tabIndex={0}
+      onClick={() => selectDeal(deal.id)}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          selectDeal(deal.id);
+        }
+      }}
       className={cn(
-        'group relative cursor-pointer rounded-lg bg-surface-elevated p-3',
+        'group relative cursor-pointer rounded-lg bg-surface-elevated p-3 text-left',
         'ring-1 ring-line transition-all duration-150',
         'hover:ring-line-strong hover:bg-surface-hover',
+        'focus-visible:ring-accent',
+        isSelected && 'ring-accent ring-1',
       )}
+      aria-pressed={isSelected}
     >
       {/* Header: contact + menu */}
       <div className="flex items-start justify-between gap-2">
@@ -56,6 +73,7 @@ export function DealCard({ deal }: DealCardProps) {
             'hover:bg-surface group-hover:opacity-100 focus-visible:opacity-100',
           )}
           aria-label="Deal options"
+          onClick={(e) => e.stopPropagation()}
         >
           <MoreHorizontal className="h-3.5 w-3.5" />
         </button>
@@ -87,16 +105,16 @@ export function DealCard({ deal }: DealCardProps) {
   );
 }
 
-function QuickAction({ icon: Icon, label }: { icon: typeof Phone; label: string }) {
+function QuickAction({ icon: Icon, label }: { icon: LucideIcon; label: string }) {
   return (
     <button
       type="button"
+      onClick={(e) => e.stopPropagation()}
       className={cn(
         'rounded p-1.5 text-muted-foreground',
         'hover:bg-surface hover:text-foreground',
       )}
       aria-label={label}
-      onClick={(e) => e.stopPropagation()}
     >
       <Icon className="h-3.5 w-3.5" strokeWidth={1.75} />
     </button>
