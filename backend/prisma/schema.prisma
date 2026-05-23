@@ -1,0 +1,15 @@
+// neVo Prisma Schema
+// Database models are intentionally NOT defined yet — this file only establishes
+// the generator and datasource configuration for MySQL.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// Models will be added in subsequent iterations:
+//   - User, Account, Contact, Lead, Deal, Pipeline, Activity, etc.
