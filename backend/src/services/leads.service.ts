@@ -16,6 +16,7 @@ import { Prisma, type Client, type Deal, type Lead, type Role } from '@prisma/cl
 
 import { prisma } from '../lib/prisma';
 import { ApiError } from '../utils/ApiError';
+import { notifyUser } from './notifications.service';
 import type { PaginatedResult } from '../types/common';
 import type {
   AssignLeadInput,
@@ -74,7 +75,7 @@ export async function create(
     await assertUserExists(assignedToId);
   }
 
-  return prisma.lead.create({
+  const lead = await prisma.lead.create({
     data: {
       name: input.name,
       company: input.company,
@@ -88,6 +89,16 @@ export async function create(
     },
     include: leadInclude,
   });
+
+  // Notify the assignee if it's someone other than the requester.
+  if (lead.assignedToId && lead.assignedToId !== requester.id) {
+    await notifyUser(lead.assignedToId, {
+      title: 'New lead assigned',
+      message: `You've been assigned the lead "${lead.name}"${lead.company ? ` from ${lead.company}` : ''}.`,
+    });
+  }
+
+  return lead;
 }
 
 export async function update(
@@ -111,11 +122,27 @@ export async function update(
     }
   }
 
-  return prisma.lead.update({
+  const updated = await prisma.lead.update({
     where: { id },
     data: input,
     include: leadInclude,
   });
+
+  // Reassignment notification: fire when assignedToId actually changed to a
+  // new, non-self user.
+  if (
+    input.assignedToId !== undefined &&
+    input.assignedToId !== existing.assignedToId &&
+    input.assignedToId !== null &&
+    input.assignedToId !== requester.id
+  ) {
+    await notifyUser(input.assignedToId, {
+      title: 'Lead reassigned to you',
+      message: `The lead "${updated.name}" has been reassigned to you.`,
+    });
+  }
+
+  return updated;
 }
 
 export async function remove(id: string, requester: Requester): Promise<void> {

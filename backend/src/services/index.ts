@@ -43,3 +43,6 @@ export type {
   TopSalesRep,
   UpcomingActivityItem,
 } from './dashboard.service';
+
+export * as notificationsService from './notifications.service';
+export type { NotificationPayload } from './notifications.service';

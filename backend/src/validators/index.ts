@@ -106,3 +106,14 @@ export type {
   LeadsBySourceQuery,
   PipelineQuery,
 } from './dashboard.validator';
+
+export {
+  listMyNotificationsQuerySchema,
+  createNotificationSchema,
+  broadcastNotificationSchema,
+} from './notifications.validator';
+export type {
+  ListMyNotificationsQuery,
+  CreateNotificationInput,
+  BroadcastNotificationInput,
+} from './notifications.validator';

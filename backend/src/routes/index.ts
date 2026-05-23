@@ -7,10 +7,10 @@ import clientsRoutes from './clients.routes';
 import dealsRoutes from './deals.routes';
 import activitiesRoutes from './activities.routes';
 import dashboardRoutes from './dashboard.routes';
+import notificationsRoutes from './notifications.routes';
 
 /**
- * API root router. Mount additional feature routers here as they are added:
- *   router.use('/notifications', notificationsRoutes);
+ * API root router.
  */
 const router = Router();
 
@@ -22,5 +22,6 @@ router.use('/clients', clientsRoutes);
 router.use('/deals', dealsRoutes);
 router.use('/activities', activitiesRoutes);
 router.use('/dashboard', dashboardRoutes);
+router.use('/notifications', notificationsRoutes);
 
 export default router;
