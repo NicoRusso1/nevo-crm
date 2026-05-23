@@ -1,25 +1,64 @@
 # neVo — Frontend
 
-Placeholder for the neVo web client. Not implemented yet.
+React + TypeScript + Vite + TailwindCSS. Dark SaaS shell inspired by Stripe and Linear.
 
-## Suggested next steps
-
-Pick a framework and scaffold inside this folder:
+## Getting started
 
 ```bash
-# Option A — React + Vite + TypeScript
-npm create vite@latest . -- --template react-ts
-
-# Option B — Next.js (App Router) + TypeScript
-npx create-next-app@latest . --typescript --app
-
-# Option C — Vue 3 + Vite + TypeScript
-npm create vue@latest .
+npm install
+npm run dev
+# → http://localhost:5173
 ```
 
-## Conventions to keep aligned with the backend
+Vite proxies `/api` and `/uploads` to the backend at `http://localhost:4000`, so any future fetch calls can use relative URLs.
 
-- **API base URL**: read from `VITE_API_URL` (or `NEXT_PUBLIC_API_URL`) and point to the backend `API_PREFIX` (default `http://localhost:4000/api/v1`).
-- **Response envelope**: every backend response is `{ success, data | error, meta? }` — write a typed fetcher that unwraps it once.
-- **Auth**: JWT in `Authorization: Bearer <token>` once the auth module lands on the backend.
-- **CORS**: the backend whitelists `CORS_ORIGIN` (comma-separated). Add your dev URL there.
+## Project layout
+
+```
+src/
+├── main.tsx            # entry — renders <App />
+├── App.tsx             # mounts the router
+├── index.css           # Tailwind base + global tweaks (scrollbar, focus ring)
+├── lib/
+│   ├── cn.ts           # clsx + tailwind-merge helper
+│   └── nav.ts          # sidebar navigation config
+├── components/
+│   ├── ui/             # Button, Card, Input, Avatar, Badge — base primitives
+│   └── layout/         # AppLayout, Sidebar, Topbar, PageHeader
+├── pages/
+│   ├── DashboardPage.tsx
+│   ├── ProjectsPage.tsx
+│   ├── TasksPage.tsx
+│   └── SettingsPage.tsx
+└── routes/
+    └── index.tsx       # react-router config
+```
+
+## Design system
+
+Tokens live in `tailwind.config.ts`:
+
+| Token                   | Value                          | Use                       |
+| ----------------------- | ------------------------------ | ------------------------- |
+| `bg-background`         | `#0B0F19`                      | page background           |
+| `bg-surface`            | `#0F1420`                      | sidebar, cards            |
+| `bg-surface-elevated`   | `#141A2A`                      | inputs, hover, popups     |
+| `bg-surface-hover`      | `#1A2236`                      | hover-on-elevated         |
+| `text-foreground`       | `#FAFAFA`                      | primary text              |
+| `text-muted`            | `#9CA3AF`                      | secondary text            |
+| `text-muted-foreground` | `#6B7280`                      | helper / placeholder text |
+| `border-line`           | `rgba(255,255,255,0.06)`       | dividers, card outlines   |
+| `border-line-strong`    | `rgba(255,255,255,0.10)`       | hover dividers, keyboard  |
+| `bg-accent`             | `#5B6CFF`                      | primary brand accent      |
+| `bg-accent-muted`       | `rgba(91,108,255,0.12)`        | active nav, chips         |
+
+Typography is **Inter** (loaded from Google Fonts in `index.html`), with tighter letter-spacing on display sizes for the Linear feel.
+
+## Scripts
+
+| Script               | Purpose                          |
+| -------------------- | -------------------------------- |
+| `npm run dev`        | Vite dev server on :5173         |
+| `npm run build`      | Type-check + production build    |
+| `npm run preview`    | Preview the production build     |
+| `npm run typecheck`  | Type-check without emitting      |
