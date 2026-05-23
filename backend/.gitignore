@@ -3,6 +3,9 @@ node_modules/
 .pnp
 .pnp.js
 
+# Runtime uploads (avatars, attachments) — don't commit user-generated files
+uploads/
+
 # Build output
 dist/
 build/

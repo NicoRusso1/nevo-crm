@@ -1,3 +1,4 @@
+import path from 'node:path';
 import express, { type Application } from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
@@ -26,7 +27,13 @@ export function createApp(): Application {
   app.disable('x-powered-by');
 
   // ── Security & infra middleware ────────────────────────────────────────────
-  app.use(helmet());
+  // helmet's default CSP blocks cross-origin <img> loading of /uploads from
+  // the frontend dev server. crossOriginResourcePolicy allows it.
+  app.use(
+    helmet({
+      crossOriginResourcePolicy: { policy: 'cross-origin' },
+    }),
+  );
   app.use(cors(corsOptions));
   app.use(compression());
   app.use(requestId);
@@ -37,6 +44,17 @@ export function createApp(): Application {
   // ── Body parsing ───────────────────────────────────────────────────────────
   app.use(express.json({ limit: '1mb' }));
   app.use(express.urlencoded({ extended: true, limit: '1mb' }));
+
+  // ── Static uploads (avatars, etc.) ─────────────────────────────────────────
+  // Served from <cwd>/uploads. Multer writes here from `middlewares/upload.ts`.
+  // In production, swap for an object-storage CDN and drop this line.
+  app.use(
+    '/uploads',
+    express.static(path.join(process.cwd(), 'uploads'), {
+      fallthrough: true,
+      maxAge: isProduction ? '7d' : 0,
+    }),
+  );
 
   // ── Rate limiting (apply to API surface only) ──────────────────────────────
   app.use(env.API_PREFIX, globalRateLimiter);
