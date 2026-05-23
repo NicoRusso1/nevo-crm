@@ -24,6 +24,7 @@ export interface Deal {
   id: string;
   contactName: string;
   company: string;
+  companyId: string;
   value: number;
   stage: DealStage;
   priority: Priority;
@@ -78,41 +79,41 @@ export function defaultProbabilityFor(stage: DealStage): number {
 
 export const INITIAL_DEALS: readonly Deal[] = [
   // Lead
-  { id: 'd01', contactName: 'Camila Diaz',     company: 'Nimbus Group',       value: 18_400,  stage: 'lead',      priority: 'medium', probability: 12, ownerId: 'u1', contactEmail: 'camila@nimbus.com' },
-  { id: 'd02', contactName: 'Juan Perez',      company: 'Acme Corp',          value: 45_200,  stage: 'lead',      priority: 'high',   probability: 15, ownerId: 'u2', contactEmail: 'juan@acme.com' },
-  { id: 'd03', contactName: 'Sofia Castro',    company: 'Vertex Inc',         value: 9_800,   stage: 'lead',      priority: 'low',    probability: 8,  ownerId: 'u3', contactEmail: 'sofia@vertex.com' },
-  { id: 'd04', contactName: 'Mateo Aguirre',   company: 'Boreal Labs',        value: 32_100,  stage: 'lead',      priority: 'medium', probability: 18, ownerId: 'u1', contactEmail: 'mateo@boreal.com' },
-  { id: 'd05', contactName: 'Renata Vega',     company: 'Quantum Networks',   value: 67_500,  stage: 'lead',      priority: 'high',   probability: 22, ownerId: 'u2', contactEmail: 'renata@quantum.com' },
-  { id: 'd06', contactName: 'Bruno Acosta',    company: 'Polar Studios',      value: 12_000,  stage: 'lead',      priority: 'low',    probability: 10, ownerId: 'u4', contactEmail: 'bruno@polar.com' },
+  { id: 'd01', contactName: 'Camila Diaz',     company: 'Nimbus Group',       companyId: 'co-004', value: 18_400,  stage: 'lead',      priority: 'medium', probability: 12, ownerId: 'u1', contactEmail: 'camila@nimbus.com' },
+  { id: 'd02', contactName: 'Juan Perez',      company: 'Acme Corp',          companyId: 'co-005', value: 45_200,  stage: 'lead',      priority: 'high',   probability: 15, ownerId: 'u2', contactEmail: 'juan@acme.com' },
+  { id: 'd03', contactName: 'Sofia Castro',    company: 'Vertex Inc',         companyId: 'co-006', value: 9_800,   stage: 'lead',      priority: 'low',    probability: 8,  ownerId: 'u3', contactEmail: 'sofia@vertex.com' },
+  { id: 'd04', contactName: 'Mateo Aguirre',   company: 'Boreal Labs',        companyId: 'co-007', value: 32_100,  stage: 'lead',      priority: 'medium', probability: 18, ownerId: 'u1', contactEmail: 'mateo@boreal.com' },
+  { id: 'd05', contactName: 'Renata Vega',     company: 'Quantum Networks',   companyId: 'co-008', value: 67_500,  stage: 'lead',      priority: 'high',   probability: 22, ownerId: 'u2', contactEmail: 'renata@quantum.com' },
+  { id: 'd06', contactName: 'Bruno Acosta',    company: 'Polar Studios',      companyId: 'co-009', value: 12_000,  stage: 'lead',      priority: 'low',    probability: 10, ownerId: 'u4', contactEmail: 'bruno@polar.com' },
 
   // Contacted
-  { id: 'd07', contactName: 'Lucia Romero',    company: 'Helios Systems',     value: 54_300,  stage: 'contacted', priority: 'high',   probability: 30, ownerId: 'u3', contactEmail: 'lucia@helios.com' },
-  { id: 'd08', contactName: 'Diego Fernandez', company: 'Pioneer Partners',   value: 28_900,  stage: 'contacted', priority: 'medium', probability: 28, ownerId: 'u1', contactEmail: 'diego@pioneer.com' },
-  { id: 'd09', contactName: 'Olivia Suarez',   company: 'Cobalt Ventures',    value: 41_750,  stage: 'contacted', priority: 'medium', probability: 25, ownerId: 'u4', contactEmail: 'olivia@cobalt.com' },
-  { id: 'd10', contactName: 'Tomas Vargas',    company: 'Apex Solutions',     value: 96_200,  stage: 'contacted', priority: 'high',   probability: 32, ownerId: 'u2', contactEmail: 'tomas@apex.com' },
-  { id: 'd11', contactName: 'Valentina Lopez', company: 'Stellar Group',      value: 22_400,  stage: 'contacted', priority: 'low',    probability: 22, ownerId: 'u3', contactEmail: 'valentina@stellar.com' },
+  { id: 'd07', contactName: 'Lucia Romero',    company: 'Helios Systems',     companyId: 'co-010', value: 54_300,  stage: 'contacted', priority: 'high',   probability: 30, ownerId: 'u3', contactEmail: 'lucia@helios.com' },
+  { id: 'd08', contactName: 'Diego Fernandez', company: 'Pioneer Partners',   companyId: 'co-011', value: 28_900,  stage: 'contacted', priority: 'medium', probability: 28, ownerId: 'u1', contactEmail: 'diego@pioneer.com' },
+  { id: 'd09', contactName: 'Olivia Suarez',   company: 'Cobalt Ventures',    companyId: 'co-012', value: 41_750,  stage: 'contacted', priority: 'medium', probability: 25, ownerId: 'u4', contactEmail: 'olivia@cobalt.com' },
+  { id: 'd10', contactName: 'Tomas Vargas',    company: 'Apex Solutions',     companyId: 'co-013', value: 96_200,  stage: 'contacted', priority: 'high',   probability: 32, ownerId: 'u2', contactEmail: 'tomas@apex.com' },
+  { id: 'd11', contactName: 'Valentina Lopez', company: 'Stellar Group',      companyId: 'co-014', value: 22_400,  stage: 'contacted', priority: 'low',    probability: 22, ownerId: 'u3', contactEmail: 'valentina@stellar.com' },
 
   // Qualified
-  { id: 'd12', contactName: 'Pablo Diaz',      company: 'Sentinel Capital',   value: 134_000, stage: 'qualified', priority: 'high',   probability: 55, ownerId: 'u1', contactEmail: 'pablo@sentinel.com' },
-  { id: 'd13', contactName: 'Florencia Gomez', company: 'Aurora Dynamics',    value: 58_700,  stage: 'qualified', priority: 'medium', probability: 48, ownerId: 'u4', contactEmail: 'florencia@aurora.com' },
-  { id: 'd14', contactName: 'Sebastian Ruiz',  company: 'Zenith Holdings',    value: 76_400,  stage: 'qualified', priority: 'high',   probability: 52, ownerId: 'u2', contactEmail: 'sebastian@zenith.com' },
-  { id: 'd15', contactName: 'Antonella Silva', company: 'Lumen Networks',     value: 31_900,  stage: 'qualified', priority: 'medium', probability: 42, ownerId: 'u3', contactEmail: 'antonella@lumen.com' },
+  { id: 'd12', contactName: 'Pablo Diaz',      company: 'Sentinel Capital',   companyId: 'co-001', value: 134_000, stage: 'qualified', priority: 'high',   probability: 55, ownerId: 'u1', contactEmail: 'pablo@sentinel.com' },
+  { id: 'd13', contactName: 'Florencia Gomez', company: 'Aurora Dynamics',    companyId: 'co-002', value: 58_700,  stage: 'qualified', priority: 'medium', probability: 48, ownerId: 'u4', contactEmail: 'florencia@aurora.com' },
+  { id: 'd14', contactName: 'Sebastian Ruiz',  company: 'Zenith Holdings',    companyId: 'co-021', value: 76_400,  stage: 'qualified', priority: 'high',   probability: 52, ownerId: 'u2', contactEmail: 'sebastian@zenith.com' },
+  { id: 'd15', contactName: 'Antonella Silva', company: 'Lumen Networks',     companyId: 'co-022', value: 31_900,  stage: 'qualified', priority: 'medium', probability: 42, ownerId: 'u3', contactEmail: 'antonella@lumen.com' },
 
   // Proposal
-  { id: 'd16', contactName: 'Ignacio Cabrera', company: 'Vanguard Ventures',  value: 215_000, stage: 'proposal',  priority: 'high',   probability: 75, ownerId: 'u1', contactEmail: 'ignacio@vanguard.com' },
-  { id: 'd17', contactName: 'Paula Mendez',    company: 'Catalyst Inc',       value: 89_400,  stage: 'proposal',  priority: 'high',   probability: 70, ownerId: 'u2', contactEmail: 'paula@catalyst.com' },
-  { id: 'd18', contactName: 'Cristian Reyes',  company: 'Equinox Labs',       value: 67_800,  stage: 'proposal',  priority: 'medium', probability: 60, ownerId: 'u4', contactEmail: 'cristian@equinox.com' },
-  { id: 'd19', contactName: 'Belen Ortega',    company: 'Beacon Solutions',   value: 48_500,  stage: 'proposal',  priority: 'medium', probability: 65, ownerId: 'u3', contactEmail: 'belen@beacon.com' },
+  { id: 'd16', contactName: 'Ignacio Cabrera', company: 'Vanguard Ventures',  companyId: 'co-015', value: 215_000, stage: 'proposal',  priority: 'high',   probability: 75, ownerId: 'u1', contactEmail: 'ignacio@vanguard.com' },
+  { id: 'd17', contactName: 'Paula Mendez',    company: 'Catalyst Inc',       companyId: 'co-016', value: 89_400,  stage: 'proposal',  priority: 'high',   probability: 70, ownerId: 'u2', contactEmail: 'paula@catalyst.com' },
+  { id: 'd18', contactName: 'Cristian Reyes',  company: 'Equinox Labs',       companyId: 'co-017', value: 67_800,  stage: 'proposal',  priority: 'medium', probability: 60, ownerId: 'u4', contactEmail: 'cristian@equinox.com' },
+  { id: 'd19', contactName: 'Belen Ortega',    company: 'Beacon Solutions',   companyId: 'co-018', value: 48_500,  stage: 'proposal',  priority: 'medium', probability: 65, ownerId: 'u3', contactEmail: 'belen@beacon.com' },
 
   // Won
-  { id: 'd20', contactName: 'Santiago Cruz',   company: 'Atlas International',value: 320_000, stage: 'won',       priority: 'high',   probability: 100, ownerId: 'u1', contactEmail: 'santiago@atlas.com' },
-  { id: 'd21', contactName: 'Victoria Molina', company: 'Forge Industries',   value: 145_200, stage: 'won',       priority: 'medium', probability: 100, ownerId: 'u2', contactEmail: 'victoria@forge.com' },
-  { id: 'd22', contactName: 'Ramiro Castro',   company: 'Halcyon Group',      value: 88_900,  stage: 'won',       priority: 'medium', probability: 100, ownerId: 'u4', contactEmail: 'ramiro@halcyon.com' },
-  { id: 'd23', contactName: 'Daniela Navarro', company: 'Crescent Studios',   value: 42_300,  stage: 'won',       priority: 'low',    probability: 100, ownerId: 'u3', contactEmail: 'daniela@crescent.com' },
+  { id: 'd20', contactName: 'Santiago Cruz',   company: 'Atlas International',companyId: 'co-003', value: 320_000, stage: 'won',       priority: 'high',   probability: 100, ownerId: 'u1', contactEmail: 'santiago@atlas.com' },
+  { id: 'd21', contactName: 'Victoria Molina', company: 'Forge Industries',   companyId: 'co-019', value: 145_200, stage: 'won',       priority: 'medium', probability: 100, ownerId: 'u2', contactEmail: 'victoria@forge.com' },
+  { id: 'd22', contactName: 'Ramiro Castro',   company: 'Halcyon Group',      companyId: 'co-020', value: 88_900,  stage: 'won',       priority: 'medium', probability: 100, ownerId: 'u4', contactEmail: 'ramiro@halcyon.com' },
+  { id: 'd23', contactName: 'Daniela Navarro', company: 'Crescent Studios',   companyId: 'co-023', value: 42_300,  stage: 'won',       priority: 'low',    probability: 100, ownerId: 'u3', contactEmail: 'daniela@crescent.com' },
 
   // Lost
-  { id: 'd24', contactName: 'Esteban Hernandez', company: 'Ember Capital',    value: 56_000,  stage: 'lost',      priority: 'medium', probability: 0,   ownerId: 'u2', contactEmail: 'esteban@ember.com' },
-  { id: 'd25', contactName: 'Carolina Torres',   company: 'Tundra Tech',      value: 24_500,  stage: 'lost',      priority: 'low',    probability: 0,   ownerId: 'u4', contactEmail: 'carolina@tundra.com' },
+  { id: 'd24', contactName: 'Esteban Hernandez', company: 'Ember Capital',    companyId: 'co-024', value: 56_000,  stage: 'lost',      priority: 'medium', probability: 0,   ownerId: 'u2', contactEmail: 'esteban@ember.com' },
+  { id: 'd25', contactName: 'Carolina Torres',   company: 'Tundra Tech',      companyId: 'co-025', value: 24_500,  stage: 'lost',      priority: 'low',    probability: 0,   ownerId: 'u4', contactEmail: 'carolina@tundra.com' },
 ];
 
 // ── Activities ─────────────────────────────────────────────────────────────

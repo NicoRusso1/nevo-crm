@@ -11,6 +11,7 @@ export interface Contact {
   email: string;
   phone?: string;
   company: string;
+  companyId: string;
   position?: string;
   status: ContactStatus;
   /** Sales rep name + email (the deal owner from the rep's perspective). */
@@ -59,6 +60,7 @@ export const CONTACTS: readonly Contact[] = [
     email: 'pablo.diaz@sentinel.com',
     phone: '+54 9 11 4521-8377',
     company: 'Sentinel Capital',
+    companyId: 'co-001',
     position: 'VP of Procurement',
     status: 'active',
     owner: { name: 'Maria Lopez', email: 'maria@nevo.dev' },
@@ -71,6 +73,7 @@ export const CONTACTS: readonly Contact[] = [
     email: 'florencia.gomez@aurora.com',
     phone: '+54 9 11 6388-2210',
     company: 'Aurora Dynamics',
+    companyId: 'co-002',
     position: 'Head of Operations',
     status: 'lead',
     owner: { name: 'Diego Fernandez', email: 'diego@nevo.dev' },
@@ -83,6 +86,7 @@ export const CONTACTS: readonly Contact[] = [
     email: 'santiago@atlas.com',
     phone: '+54 9 11 5044-7188',
     company: 'Atlas International',
+    companyId: 'co-003',
     position: 'CFO',
     status: 'customer',
     owner: { name: 'Maria Lopez', email: 'maria@nevo.dev' },

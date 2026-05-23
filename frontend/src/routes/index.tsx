@@ -5,6 +5,9 @@ import { ProjectsPage } from '@/pages/ProjectsPage';
 import { TasksPage } from '@/pages/TasksPage';
 import { SettingsPage } from '@/pages/SettingsPage';
 import { ContactDetailPage } from '@/pages/ContactDetailPage';
+import { CompaniesPage } from '@/pages/CompaniesPage';
+import { CompanyDetailPage } from '@/pages/CompanyDetailPage';
+import { ActivityCenterPage } from '@/pages/ActivityCenterPage';
 
 /**
  * Router config. Every authenticated page renders inside `AppLayout` (sidebar
@@ -16,9 +19,12 @@ export const router = createBrowserRouter([
     element: <AppLayout />,
     children: [
       { index: true, element: <DashboardPage /> },
+      { path: 'companies', element: <CompaniesPage /> },
+      { path: 'companies/:companyId', element: <CompanyDetailPage /> },
       // Default to the demo contact when arriving at /contacts.
       { path: 'contacts', element: <Navigate to="/contacts/c-001" replace /> },
       { path: 'contacts/:contactId', element: <ContactDetailPage /> },
+      { path: 'activities', element: <ActivityCenterPage /> },
       { path: 'projects', element: <ProjectsPage /> },
       { path: 'tasks', element: <TasksPage /> },
       { path: 'settings', element: <SettingsPage /> },

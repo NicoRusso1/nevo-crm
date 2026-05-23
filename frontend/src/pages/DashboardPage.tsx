@@ -4,7 +4,6 @@ import { PipelineKanban } from '@/components/sales/PipelineKanban';
 import { PipelineStatsBar } from '@/components/sales/PipelineStatsBar';
 import { ActionPanel } from '@/components/sales/ActionPanel';
 import { DealDrawer } from '@/components/sales/DealDrawer';
-import { SalesProvider } from '@/components/sales/store';
 
 /**
  * Sales pipeline — the main operational view of neVo Sales CRM.
@@ -15,27 +14,25 @@ import { SalesProvider } from '@/components/sales/store';
  */
 export function DashboardPage() {
   return (
-    <SalesProvider>
-      <div className="flex h-[calc(100vh-8rem)] flex-col gap-6">
-        <PageHeading />
+    <div className="flex h-[calc(100vh-8rem)] flex-col gap-6">
+      <PageHeading />
 
-        <div className="grid min-h-0 flex-1 grid-cols-1 gap-6 xl:grid-cols-[minmax(0,_1.6fr)_360px]">
-          {/* Pipeline column */}
-          <div className="flex min-h-0 flex-col gap-4">
-            <PipelineStatsBar />
-            <PipelineKanban />
-          </div>
+      <div className="grid min-h-0 flex-1 grid-cols-1 gap-6 xl:grid-cols-[minmax(0,_1.6fr)_360px]">
+        {/* Pipeline column */}
+        <div className="flex min-h-0 flex-col gap-4">
+          <PipelineStatsBar />
+          <PipelineKanban />
+        </div>
 
-          {/* Action panel — only on xl+, where there's room. */}
-          <div className="hidden min-h-0 overflow-y-auto xl:block">
-            <ActionPanel />
-          </div>
+        {/* Action panel — only on xl+, where there's room. */}
+        <div className="hidden min-h-0 overflow-y-auto xl:block">
+          <ActionPanel />
         </div>
       </div>
 
       {/* Deal detail drawer — fixed, mounted at top level of the provider. */}
       <DealDrawer />
-    </SalesProvider>
+    </div>
   );
 }
 

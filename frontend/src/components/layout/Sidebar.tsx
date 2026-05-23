@@ -35,18 +35,21 @@ export function Sidebar() {
                   )
                 }
               >
-                {({ isActive }) => (
-                  <>
-                    <item.icon
-                      className={cn(
-                        'h-4 w-4 shrink-0',
-                        isActive ? 'text-accent' : 'text-muted-foreground',
-                      )}
-                      strokeWidth={1.75}
-                    />
-                    <span>{item.label}</span>
-                  </>
-                )}
+                {({ isActive }) => {
+                  const Icon = item.icon;
+                  return (
+                    <>
+                      <Icon
+                        className={cn(
+                          'h-4 w-4 shrink-0',
+                          isActive ? 'text-accent' : 'text-muted-foreground',
+                        )}
+                        strokeWidth={1.75}
+                      />
+                      <span>{item.label}</span>
+                    </>
+                  );
+                }}
               </NavLink>
             </li>
           ))}
