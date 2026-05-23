@@ -5,10 +5,10 @@ import usersRoutes from './users.routes';
 import leadsRoutes from './leads.routes';
 import clientsRoutes from './clients.routes';
 import dealsRoutes from './deals.routes';
+import activitiesRoutes from './activities.routes';
 
 /**
  * API root router. Mount additional feature routers here as they are added:
- *   router.use('/activities',    activitiesRoutes);
  *   router.use('/notifications', notificationsRoutes);
  */
 const router = Router();
@@ -19,5 +19,6 @@ router.use('/users', usersRoutes);
 router.use('/leads', leadsRoutes);
 router.use('/clients', clientsRoutes);
 router.use('/deals', dealsRoutes);
+router.use('/activities', activitiesRoutes);
 
 export default router;

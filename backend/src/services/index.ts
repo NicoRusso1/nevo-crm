@@ -26,3 +26,9 @@ export type {
   KanbanBoard,
   KanbanColumn,
 } from './deals.service';
+
+export * as activitiesService from './activities.service';
+export type {
+  ActivityWithRelations,
+  UpcomingResult,
+} from './activities.service';

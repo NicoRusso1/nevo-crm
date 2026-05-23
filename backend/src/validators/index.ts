@@ -72,3 +72,22 @@ export type {
   KanbanQuery,
   DealStatsQuery,
 } from './deals.validator';
+
+export {
+  createActivitySchema,
+  updateActivitySchema,
+  markCompletedSchema,
+  listActivitiesQuerySchema,
+  upcomingActivitiesQuerySchema,
+  timelineQuerySchema,
+  myActivitiesQuerySchema,
+} from './activities.validator';
+export type {
+  CreateActivityInput,
+  UpdateActivityInput,
+  MarkCompletedInput,
+  ListActivitiesQuery,
+  UpcomingActivitiesQuery,
+  TimelineQuery,
+  MyActivitiesQuery,
+} from './activities.validator';
