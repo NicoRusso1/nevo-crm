@@ -38,3 +38,18 @@ export type {
   AssignLeadInput,
   ConvertLeadInput,
 } from './leads.validator';
+
+export {
+  createClientSchema,
+  updateClientSchema,
+  listClientsQuerySchema,
+  listClientDealsQuerySchema,
+  listClientActivitiesQuerySchema,
+} from './clients.validator';
+export type {
+  CreateClientInput,
+  UpdateClientInput,
+  ListClientsQuery,
+  ListClientDealsQuery,
+  ListClientActivitiesQuery,
+} from './clients.validator';

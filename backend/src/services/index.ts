@@ -10,3 +10,10 @@ export type {
   LeadWithAssignee,
   ConvertLeadResult,
 } from './leads.service';
+
+export * as clientsService from './clients.service';
+export type {
+  ClientWithDealCount,
+  ClientDetail,
+  ClientStats,
+} from './clients.service';
